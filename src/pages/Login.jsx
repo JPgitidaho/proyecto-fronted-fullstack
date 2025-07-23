@@ -15,8 +15,9 @@ export default function Login() {
       localStorage.setItem('token', res.data.token)
       navigate('/')
     } catch (err) {
-      alert('Error al iniciar sesión')
-    }
+  alert(err.response?.data?.msg || 'Error al registrarse')
+}
+
   }
 
   return (

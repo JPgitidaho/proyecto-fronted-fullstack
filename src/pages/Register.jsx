@@ -15,8 +15,9 @@ export default function Register() {
       alert('Usuario registrado correctamente')
       navigate('/login')
     } catch (err) {
-      alert('Error al registrarse')
-    }
+  alert(err.response?.data?.msg || 'Error al registrarse')
+}
+
   }
 
   return (
