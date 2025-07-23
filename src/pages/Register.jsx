@@ -11,13 +11,13 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await api.post('/auth/register', { email, password })
-      alert('Usuario registrado correctamente')
+      const res = await api.post('/auth/register', { email, password })
+      alert(res.data.msg || 'Usuario registrado correctamente')
       navigate('/login')
     } catch (err) {
-  alert(err.response?.data?.msg || 'Error al registrarse')
-}
-
+      const msg = err.response?.data?.msg || (err.response?.data?.errors?.[0]?.msg) || 'Error al registrarse'
+      alert(msg)
+    }
   }
 
   return (
