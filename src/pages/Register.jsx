@@ -7,11 +7,13 @@ export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const [name, setName] = useState('')
+
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const res = await api.post('/auth/register', { email, password })
+      const res = await api.post('/auth/register', { name, email, password })
       alert(res.data.msg || 'Usuario registrado correctamente')
       navigate('/login')
     } catch (err) {
@@ -24,6 +26,14 @@ export default function Register() {
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
         <h2 className={styles.title}>Crear cuenta</h2>
+        <input
+          type="text"
+          placeholder="Nombre"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className={styles.input}
+          required
+        />
 
         <input
           type="email"
