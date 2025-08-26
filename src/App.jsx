@@ -1,20 +1,18 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import appStyles from './styles/App.module.css' 
+import { Routes, Route } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Tasks from './pages/Tasks';
+import PrivateRoute from './components/PrivateRoute';
 
-function App() {
-  const isAuthenticated = !!localStorage.getItem('token')
-
+export default function App() {
   return (
-    <div className={appStyles.container}> 
-      <Routes>
-        <Route path="/" element={isAuthenticated ? <Tasks /> : <Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </div>
-  )
+    <Routes>
+      <Route path="/login" element={<Login/>} />
+      <Route path="/register" element={<Register/>} />
+      <Route element={<PrivateRoute/>}>
+        <Route path="/" element={<Tasks/>} />
+      </Route>
+    </Routes>
+  );
 }
-
-export default App
+s
