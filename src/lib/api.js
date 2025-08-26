@@ -1,9 +1,7 @@
 import axios from 'axios';
 
 const RAW = import.meta.env.VITE_API_URL || '';
-const BASE = RAW
-  .replace(/\/+$/,'')   // quita / finales
-  .replace(/\/api$/i,''); // quita /api si lo dejaste en la env
+const BASE = RAW.replace(/\/+$/,'').replace(/\/api$/i,'');
 
 export const api = axios.create({
   baseURL: BASE,
@@ -18,5 +16,5 @@ api.interceptors.request.use(cfg => {
 
 export const endpoints = {
   register: '/api/auth/register',
-  login: '/api/auth/login',
+  login: '/api/auth/login'
 };
