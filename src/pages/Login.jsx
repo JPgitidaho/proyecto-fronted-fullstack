@@ -1,57 +1,37 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import api from '../services/api'
-import styles from '../styles/Login.module.css'
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { api } from '../lib/api';
 
 export default function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const navigate = useNavigate()
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const onChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const onSubmit = async e => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
     try {
-      const res = await api.post('/auth/login', { email, password })
-      localStorage.setItem('token', res.data.token)
-      navigate('/')
+      const { data } = await api.post('/api/auth/login', form);
+      localStorage.setItem('token', data.token);
+      navigate('/');
     } catch (err) {
-  const msg = err.response?.data?.msg || (err.response?.data?.errors?.[0]?.msg) || 'Error al iniciar sesión'
-  alert(msg)
-}
-
-
-  }
+      setError(err?.response?.data?.message || 'No pudimos iniciar sesión');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className={styles.container}>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <h2 className={styles.title}>Iniciar sesión</h2>
-
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={styles.input}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={styles.input}
-          required
-        />
-
-        <button type="submit" className={styles.button}>
-          Ingresar
-        </button>
-
-        <p className={styles.link}>
-          ¿No tienes cuenta? <a href="/register">Regístrate</a>
-        </p>
-      </form>
-    </div>
-  )
+    <form onSubmit={onSubmit}>
+      <input name="email" type="email" value={form.email} onChange={onChange} />
+      <input name="password" type="password" value={form.password} onChange={onChange} />
+      {error && <p>{error}</p>}
+      <button type="submit" disabled={loading}>{loading ? 'Entrando...' : 'Entrar'}</button>
+      <p>¿No tienes cuenta? <Link to="/register">Regístrate</Link></p>
+    </form>
+  );
 }

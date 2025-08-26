@@ -1,65 +1,37 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import api from '../services/api'
-import styles from '../styles/Register.module.css'
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { api } from '../lib/api';
 
 export default function Register() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const navigate = useNavigate()
-  const [name, setName] = useState('')
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
+  const onChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const onSubmit = async e => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
     try {
-      const res = await api.post('/auth/register', { name, email, password })
-      alert(res.data.msg || 'Usuario registrado correctamente')
-      navigate('/login')
+      await api.post('/api/auth/register', form);
+      navigate('/login');
     } catch (err) {
-      const msg = err.response?.data?.msg || (err.response?.data?.errors?.[0]?.msg) || 'Error al registrarse'
-      alert(msg)
+      setError(err?.response?.data?.message || 'Error al registrarte');
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className={styles.container}>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <h2 className={styles.title}>Crear cuenta</h2>
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className={styles.input}
-          required
-        />
-
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={styles.input}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={styles.input}
-          required
-        />
-
-        <button type="submit" className={styles.button}>
-          Registrarse
-        </button>
-
-        <p className={styles.link}>
-          ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
-        </p>
-      </form>
-    </div>
-  )
+    <form onSubmit={onSubmit}>
+      <input name="name" value={form.name} onChange={onChange} />
+      <input name="email" type="email" value={form.email} onChange={onChange} />
+      <input name="password" type="password" value={form.password} onChange={onChange} />
+      {error && <p>{error}</p>}
+      <button type="submit" disabled={loading}>{loading ? 'Guardando...' : 'Crear cuenta'}</button>
+      <p>¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link></p>
+    </form>
+  );
 }
