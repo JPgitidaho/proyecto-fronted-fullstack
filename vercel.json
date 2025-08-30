@@ -1,6 +1,5 @@
-
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://tu-backend-publico/api/$1" }
+    { "source": "/api/(.*)", "destination": "https://task-manager-backend-fqfv.onrender.com/api/$1" }
   ]
 }
